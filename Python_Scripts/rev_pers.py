@@ -52,4 +52,4 @@ print(filtered_revpers.head())
 
 # In[42]:
 # Save the filtered DataFrame to CSV
-filtered_revpers.to_csv("./.data/filtered_revpers.csv", index=False)
+filtered_revpers.to_csv("./.data/filtered/filtered_revpers.csv", index=False)

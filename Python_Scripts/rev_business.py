@@ -45,4 +45,4 @@ filtered_rev.sort_values("Payment Date", ascending=True, inplace=True)
 print(filtered_rev.head())
 
 # Save to CSV
-filtered_rev.to_csv(".data/filtered_revbus.csv", index=False)
+filtered_rev.to_csv(".data/filtered/filtered_revbus.csv", index=False)

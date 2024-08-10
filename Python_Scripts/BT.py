@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[9]:
 import pandas as pd
 import numpy as np
 
@@ -18,9 +14,6 @@ df = pd.concat([btradron, btradeur], ignore_index=True)
 # Drop unnecessary columns
 df.drop(columns=["Referinta tranzactiei", "Credit", "Sold contabil", "Data valuta"], inplace=True)
 
-print(df.head())
-
-# In[11]:
 # Extract and filter data
 df["Payment Date"] = df["Descriere"].str.extract(r"(POS\s(\d{2}\/\d{2}\/\d{4}))")[1]
 regex_pattern = r"Schimb valutar|LT383250069969855031|Comision"
@@ -38,16 +31,10 @@ filtered_df["Data tranzactie"] = pd.to_datetime(df["Data tranzactie"], errors="c
 filtered_df["Payment Date"] = filtered_df["Payment Date"].dt.strftime("%d-%m-%Y")
 filtered_df["Data tranzactie"] = filtered_df["Data tranzactie"].dt.strftime("%d-%m-%Y")
 
-print(filtered_df.head())
-
-# In[12]:
 # Extract merchant information
 filtered_df["Merchant"] = filtered_df["Descriere"].str.extract(r"TID:\s*(?:[^\s]{2,8}\s+)?(\w+)")
 filtered_df["Merchant"].fillna(df["Descriere"].str.split(";").str[3], inplace=True)
 
-print(filtered_df.head())
-
-# In[13]:
 # Convert to datetime for sorting and format for output
 filtered_df['Payment Date'] = pd.to_datetime(filtered_df['Payment Date'], errors='coerce', dayfirst=True)
 filtered_df['Data tranzactie'] = pd.to_datetime(filtered_df['Data tranzactie'], errors='coerce', dayfirst=True)
@@ -68,8 +55,13 @@ filtered_df["Account"] = "BT Business"
 new_column_order = ['Payment Date', 'Merchant', 'Description', 'Debit', 'Currency', 'Account']
 filtered_df = filtered_df[new_column_order]
 
-print(filtered_df.head())
+# Convert 'Debit' column to numeric, forcing errors to NaN
+filtered_df["Debit"] = pd.to_numeric(filtered_df["Debit"], errors='coerce')
 
-# In[15]:
+# Format the 'Debit' column to use comma as decimal separator
+filtered_df["Debit"] = filtered_df["Debit"].apply(lambda x: f"{x:,.1f}".replace(",", " ").replace(".", ",").replace(" ", ".") if pd.notnull(x) else "")
+
 # Save to CSV
-filtered_df.to_csv(".data/filtered_bt.csv", index=False)
+filtered_df.to_csv(".data/filtered/filtered_bt.csv", index=False)
+
+print(filtered_df.head())
